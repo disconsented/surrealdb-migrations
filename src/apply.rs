@@ -427,7 +427,7 @@ async fn apply_migrations<C: Connection>(
 ) -> Result<()> {
     let mut has_applied_schemas = false;
     let mut has_applied_events = false;
-    let has_applied_migrations = !&migration_files_to_execute.is_empty();
+    let pending_migrations = !migration_files_to_execute.is_empty();
     let mut current_definition: SchemaMigrationDefinition = Default::default();
 
     if use_migration_definitions {
@@ -443,7 +443,7 @@ async fn apply_migrations<C: Connection>(
             }
         }?;
 
-        if !has_applied_migrations {
+        if pending_migrations {
             let schemas_statements = current_definition.schemas.to_string();
             let events_statements = current_definition.events.to_string();
 
@@ -612,7 +612,7 @@ CREATE {} SET script_name = '{}';",
         if has_applied_events {
             println!("Event files successfully executed!");
         }
-        if has_applied_migrations {
+        if pending_migrations {
             println!("Migration files successfully executed!");
         }
     }
